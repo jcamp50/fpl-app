@@ -1,5 +1,5 @@
-// "use client";
-import React, { useEffect, useState } from "react";
+'use client'
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -7,56 +7,67 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import GNews from "gnews-scraper";
+} from '@/components/ui/card';
 
-const PlayerNews = async () => {
-  // commented out so we don't go over 100
-  //   const apiUrl = `https://newsapi.org/v2/top-headlines?country=gb&category=sports&apiKey=${process.env.NEWS_API_KEY}`;
-  //   const data: any = await (await fetch(apiUrl)).json();
-  // uncomment above and comment this line below
-  //   const data: any = {};
-  const data = await GNews({ searchQuery: "premier league news" });
 
-  //   if (data.status !== "ok") return <></>;
+interface Article {
+  title: string;
+  description: string;
+  url: string;
+  image: string;
+}
 
-  // const data = await (await fetch("https://sportnewsapi.com/api/v1/category?section=general_PL&items=3&page=1&token=b67ya21rmshxy11kngsjasi2tkhcu2z2txqt8t5y")).json();
-  //   useEffect(() => {
-  //     // Fetch data from the API when the component mounts
-  //     fetch(apiUrl)
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           throw new Error("Network response was not ok");
-  //         }
-  //         return response.json();
-  //       })
-  //       .then((data) => {
-  //         // Extract the news items from the "data" array
-  //         const newsItems = data.data || [];
-  //         setNewsData(newsItems);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching data:", error);
-  //       });
-  //   }, []); // Empty dependency array means this effect runs once when the component mounts
+const apiKey = process.env.NEXT_PUBLIC_NEWS_API_KEY;
+
+const PlayerNews = () => {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await fetch(
+          'https://gnews.io/api/v4/search?q="Premier League"&lang=en&country=us&max=5&apikey=' + apiKey
+        );
+        const data = await response.json();
+        if (data.articles && Array.isArray(data.articles)) {
+          setArticles(data.articles);
+        } else {
+          console.error('Unexpected response structure:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching news:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="grid grid-cols-1 grid-rows-3 items-center">
-      {data.map((item, index: number) => (
-        <Card key={index} className="mx-2 my-2 flex flex-row">
-          <div className="flex flex-col w-full">
+    <div className='grid grid-cols-1 grid-rows-3 items-center'>
+      {articles.map((item, index) => (
+        <Card key={index} className='mx-2 my-2 flex flex-row'>
+          <div className='flex flex-col w-full'>
             <CardHeader>
               <CardTitle>
-                <div className="flex flex-row">
-                  <a href={item.articleUrl}>{item.title}</a>
+                <div className='flex flex-row'>
+                  <a href={item.url}>{item.title}</a>
                 </div>
               </CardTitle>
-              {/* <CardDescription>{item.text}</CardDescription> */}
+              {item.description && (
+                <CardDescription>{item.description}</CardDescription>
+              )}
             </CardHeader>
-            <CardContent></CardContent>
+            <CardContent>{/* Add any additional content here */}</CardContent>
           </div>
 
-          <img src={item.imageUrl} className="rounded-lg" />
+          {item.image && (
+            <img src={item.image} alt={item.title} className='w-40 rounded-lg' />
+          )}
         </Card>
       ))}
     </div>
