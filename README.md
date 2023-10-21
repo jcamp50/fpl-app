@@ -9,6 +9,7 @@ Our application consists of several key features that allow you to get started, 
 - **News and Analysis:** Stay informed with the latest FPL news and expert analysis. Get insights from FPL pundits to help you stay ahead of the competition
 - **Accesible Ruleset:** Allows the uninitiated to understand the basic rules of the game and get started at any time.
 
+Read more on our [Devpost!](https://devpost.com/software/fpl-predictor?ref_content=my-projects-tab&ref_feature=my_projects)
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
